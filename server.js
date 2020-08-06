@@ -3,6 +3,7 @@ const express = require('express');
 const server = express();
 //LOCAL IMPORTS
 const userRouter = require('./users/userRouter')
+const postRouter = require('./posts/postRouter')
 
 //GLOBAL MIDDLEWARE
 server.use(logger)
@@ -12,6 +13,7 @@ server.get('/', (req, res) => {
 });
 
 server.use('/users', userRouter)
+server.use('/posts', postRouter)
 
 //custom middleware
 
