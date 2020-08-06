@@ -16,7 +16,6 @@ server.use('/users', userRouter)
 server.use('/posts', postRouter)
 
 //custom middleware
-
 function logger(req, res, next) {
   console.log(`A ${req.method} at ${req.url}. Time: ${Date.now()}`)
   next()
