@@ -1,6 +1,12 @@
 const express = require('express');
 
 const server = express();
+
+//req.body bug fix
+const bodyParser = require('body-parser')
+server.use(bodyParser.urlencoded({ extended: true }))
+server.use(bodyParser.json())
+
 //LOCAL IMPORTS
 const userRouter = require('./users/userRouter')
 const postRouter = require('./posts/postRouter')

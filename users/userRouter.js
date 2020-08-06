@@ -1,7 +1,9 @@
 const express = require('express');
 const user = require('./userDb')
 const router = express.Router();
+const Posts = require('../posts/postDb')
 
+//(SUCCESS)
 router.post('/', validateUser, (req, res) => {
   console.log(req.body)
   user.insert(req.body)
@@ -16,19 +18,18 @@ router.post('/', validateUser, (req, res) => {
   })
 });
 
+//(SUCCESS)
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
-  user.insert(req.body)
-  .then(USER=>{
-    res.status(201).json(USER)
+  const postText = req.body.text;
+  const userId = req.params.id;
+  Posts.insert({ text: postText, user_id: userId })
+  .then(() => {
+    res.status(200).json({ success: `${postText} has been posted to user id ${userId}` })
   })
-  .catch(err=>{
-    console.log(err)
-    res.status(500).json({
-      message: "Error posting new user"
-    })
+  .catch(() => {
+    res.status(500).json({ error: '500, server error!' })
   })
 });
-
 //(SUCCESS)
 router.get('/', (req, res) => {
   user.get().then(USER=>{
@@ -84,7 +85,7 @@ router.delete('/:id', validateUserId, (req, res) => {
   })
 });
 
-
+//(SUCCESS)
 router.put('/:id', (req, res) => {
   user.update(req.params.id, req.body)
   .then(USER=>{
@@ -100,6 +101,7 @@ router.put('/:id', (req, res) => {
 
 //custom middleware
 
+//(SUCCESS)
 function validateUserId(req, res, next) {
   user.getById(req.params.id)
   .then(USER=>{
@@ -112,21 +114,23 @@ function validateUserId(req, res, next) {
 }).catch(err=>{res.status(500).json({error: error.message})})
 }
 
+//(SUCCESS)(kinda)
 function validateUser(req, res, next) {
     if(req.body && req.body.name){
         next()
     }else if(!req.body){
         res.status(400).json({ message: "missing user data" });
     }else if(!req.body.name){
-      res.status(400).json({ message: "missing required name field" });
+        res.status(400).json({ message: "missing required name field" });
   }
 }
 
+//(SUCCESS)(kinda)
 function validatePost(req, res, next) {
-  if(req.body && req.body.name){
+  if(req.body && req.body.text){
     next()
   }else if(!req.body){
-      res.status(400).json({ message: "missing post data" });
+    res.status(400).json({ message: "missing post data" });
   }else if(!req.body.text){
     res.status(400).json({ message: "missing required text field" });
   }
